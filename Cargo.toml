@@ -6,4 +6,5 @@ authors = ["Nikita Marchant <nikita.marchant@gmail.com>"]
 
 [dependencies]
 rustyline = "1.0.0"
+nom = "1.2.4"
 
