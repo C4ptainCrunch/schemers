@@ -6,11 +6,11 @@ extern crate nom;
 use rustyline::error::*;
 use nom::IResult::{Done, Error, Incomplete};
 
-named!(parseSymbol<char>, one_of!("!#$%&|*+-/:<=>?@^_~"));
-// named!(parseString<&[u8], Vec<&[u8]> >, delimited!(char!('"'), many0!(not!(char!('"'))), char!('"')));
-named!(parseString, delimited!(char!('"'), inside_string, char!('"')));
+named!(parse_symbol<char>, one_of!("!#$%&|*+-/:<=>?@^_~"));
+// named!(parse_string<&[u8], Vec<&[u8]> >, delimited!(char!('"'), many0!(not!(char!('"'))), char!('"')));
+named!(parse_string<Vec<char> >, delimited!(char!('"'), inside_string, char!('"')));
 
-named!(inside_string<&[u8], std::vec::Vec<&[u8]> >, many0!(not!(char!('"'))));
+named!(inside_string<&[u8], std::vec::Vec<char> >, many0!(none_of!("\"")));
 
 
 fn main() {
@@ -25,8 +25,8 @@ fn main() {
                     println!("");
                     continue;
                 }
-                match parseString(line.as_bytes()) {
-                    Done(_, matched) => println!("match"),
+                match parse_string(line.as_bytes()) {
+                    Done(_, matched) => println!("match: {:?}", matched),
                     Error(_) | Incomplete(_) => println!("error"),
                 }
             },
