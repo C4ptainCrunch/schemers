@@ -7,7 +7,6 @@ use rustyline::error::*;
 use nom::IResult::{Done, Error, Incomplete};
 
 named!(parse_symbol<char>, one_of!("!#$%&|*+-/:<=>?@^_~"));
-// named!(parse_string<&[u8], Vec<&[u8]> >, delimited!(char!('"'), many0!(not!(char!('"'))), char!('"')));
 named!(parse_string<Vec<char> >, delimited!(char!('"'), inside_string, char!('"')));
 
 named!(inside_string<&[u8], std::vec::Vec<char> >, many0!(none_of!("\"")));
@@ -29,16 +28,14 @@ fn main() {
                     Done(_, matched) => println!("match: {:?}", matched),
                     Error(_) | Incomplete(_) => println!("error"),
                 }
-            },
-            Err(ReadlineError::Interrupted) | Err(ReadlineError::Eof) => {
-                break
-            },
+            }
+            Err(ReadlineError::Interrupted) |
+            Err(ReadlineError::Eof) => break,
             Err(err) => {
                 println!("Error: {:?}", err);
-                break
+                break;
             }
         }
         i += 1;
     }
 }
-
