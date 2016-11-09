@@ -1,0 +1,9 @@
+[package]
+name = "schemers"
+version = "0.1.0"
+authors = ["Nikita Marchant <nikita.marchant@gmail.com>"]
+
+
+[dependencies]
+rustyline = "1.0.0"
+
