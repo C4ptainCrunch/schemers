@@ -26,6 +26,7 @@ fn main() {
                         match matched {
                             parsers::LispVal::Bool(val) => println!("Bool {:?}", val),
                             parsers::LispVal::Atom(val) => println!("Atom: {:?}", val),
+                            parsers::LispVal::Number(val) => println!("Number: {:?}", val),
                             _ => println!("WAT ?")
                         }
                     },
