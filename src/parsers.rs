@@ -37,6 +37,7 @@ named!(
 // named!(
 //     pub atom,
 //     chain!(
-//         parse_atom_start ~ many0!(parse_atom_rest)
+//         start: parse_atom_start ~ rest: many0!(parse_atom_rest),
+//         || {rest.predend(start)}
 //     )
 // );
