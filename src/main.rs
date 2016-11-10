@@ -22,7 +22,13 @@ fn main() {
                     continue;
                 }
                 match parsers::atom(line.as_bytes()) {
-                    Done(_, matched) => println!("match: {:?}", matched),
+                    Done(_, matched) => {
+                        match matched {
+                            parsers::LispVal::Bool(val) => println!("Bool {:?}", val),
+                            parsers::LispVal::Atom(val) => println!("Atom: {:?}", val),
+                            _ => println!("WAT ?")
+                        }
+                    },
                     Error(_) | Incomplete(_) => println!("error"),
                 }
             }

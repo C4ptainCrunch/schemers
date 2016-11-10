@@ -2,7 +2,7 @@ extern crate std;
 
 use std::str;
 
-enum LispVal {
+pub enum LispVal {
     Atom(String),
     List(Box<Vec<LispVal>>),
     DottedList(Box<Vec<LispVal>>, Box<LispVal>),
@@ -54,7 +54,7 @@ named!(
 );
 
 named!(
-    pub atom<String>,
+    pub atom<LispVal>,
     chain!(
         start: atom_start ~ rest: many0!(atom_rest),
         || {
@@ -63,8 +63,11 @@ named!(
             for c in rest {
                 atom_content.push(c);
             }
-            // LispVal::Atom(atom_content)
-            atom_content
+            match atom_content.as_ref() {
+                "#t" => return LispVal::Bool(true),
+                "#f" => return LispVal::Bool(false),
+                _ => return LispVal::Atom(atom_content),
+            }
         }
 
     )
