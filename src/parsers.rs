@@ -1,13 +1,30 @@
 extern crate std;
 
 use std::str;
-use nom::{alpha, digit};
+
+enum LispVal {
+    Atom(String),
+    List(Box<Vec<LispVal>>),
+    DottedList(Box<Vec<LispVal>>, Box<LispVal>),
+    Number(i32),
+    String(String),
+    Bool(bool),
+}
 
 named!(
     symbol<char>,
     one_of!("!#$%&|*+-/:<=>?@^_~")
 );
 
+named!(
+    alpha<char>,
+    one_of!("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+);
+
+named!(
+    digit<char>,
+    one_of!("0123456789")
+);
 
 named!(
     pub string<&str>,
@@ -21,24 +38,34 @@ named!(
     )
 );
 
-// named!(
-//     atom_start,
-//     alt!(
-//         alpha | parse_symbol
-//     )
-// );
+named!(
+    atom_start<char>,
+    alt!(
+        alpha  |
+        symbol
+    )
+);
 
-// named!(
-//     atom_rest,
-//     alt!(
-//         alpha | digit | parse_symbol
-//     )
-// );
+named!(
+    atom_rest<char>,
+    alt!(
+        alpha | digit | symbol
+    )
+);
 
-// named!(
-//     pub atom,
-//     chain!(
-//         start: parse_atom_start ~ rest: many0!(parse_atom_rest),
-//         || {rest.predend(start)}
-//     )
-// );
+named!(
+    pub atom<String>,
+    chain!(
+        start: atom_start ~ rest: many0!(atom_rest),
+        || {
+            let mut atom_content = String::new();
+            atom_content.push(start);
+            for c in rest {
+                atom_content.push(c);
+            }
+            // LispVal::Atom(atom_content)
+            atom_content
+        }
+
+    )
+);
