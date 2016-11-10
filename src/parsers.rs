@@ -1,4 +1,6 @@
 extern crate std;
+
+use std::str;
 use nom::{alpha, digit};
 
 named!(
@@ -6,17 +8,16 @@ named!(
     one_of!("!#$%&|*+-/:<=>?@^_~")
 );
 
-named!(
-    inside_string<&[u8], std::vec::Vec<char> >,
-    many0!(none_of!("\""))
-);
 
 named!(
-    pub string<Vec<char> >,
-    delimited!(
-        char!('"'),
-        inside_string,
-        char!('"')
+    pub string<&str>,
+    map_res!(
+        delimited!(
+            char!('\"'),
+            is_not!("\""),
+            char!('\"')
+        ),
+        str::from_utf8
     )
 );
 
