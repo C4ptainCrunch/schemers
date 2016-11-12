@@ -21,12 +21,13 @@ fn main() {
                     println!("");
                     continue;
                 }
-                match parsers::atom(line.as_bytes()) {
+                match parsers::expression(line.as_bytes()) {
                     Done(_, matched) => {
                         match matched {
                             parsers::LispVal::Bool(val) => println!("Bool {:?}", val),
                             parsers::LispVal::Atom(val) => println!("Atom: {:?}", val),
                             parsers::LispVal::Number(val) => println!("Number: {:?}", val),
+                            parsers::LispVal::String(val) => println!("String {:?}", val),
                             _ => println!("WAT ?")
                         }
                     },

@@ -28,14 +28,24 @@ named!(
 );
 
 named!(
-    pub string<&str>,
-    map_res!(
-        delimited!(
-            char!('\"'),
-            is_not!("\""),
-            char!('\"')
+    _string<String>,
+    map!(
+        map_res!(
+            delimited!(
+                char!('\"'),
+                is_not!("\""),
+                char!('\"')
+            ),
+            str::from_utf8
         ),
-        str::from_utf8
+        String::from
+    )
+);
+
+named!(string<LispVal>,
+    map!(
+        _string,
+        LispVal::String
     )
 );
 
@@ -55,7 +65,7 @@ named!(
 );
 
 named!(
-    pub atom<LispVal>,
+    atom<LispVal>,
     chain!(
         start: atom_start ~ rest: many0!(atom_rest),
         || {
@@ -74,18 +84,6 @@ named!(
     )
 );
 
-// named!(
-//     pub number<LispVal>,
-//     map!(
-//         many1!(digit),
-//         |s: &[u8]| {
-//             let string = str::from_utf8(s).unwrap();
-//             let number: i32 = string.parse().unwrap();
-//             LispVal::Number(number)
-//         }
-//     )
-// );
-
 named!(_number<i32>,
     map_res!(
         map_res!(
@@ -96,16 +94,16 @@ named!(_number<i32>,
     )
 );
 
-named!(pub number<LispVal>,
-    map_res!(
+named!(number<LispVal>,
+    map!(
         _number,
         LispVal::Number
     )
 );
 
-// named!(
-//     pub lisp_val<LispVal>,
-//     alt!(
-//         number | atom
-//     )
-// );
+named!(
+    pub expression<LispVal>,
+    alt!(
+        number | atom | string
+    )
+);
