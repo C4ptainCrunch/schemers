@@ -1,8 +1,10 @@
 extern crate std;
 
 use std::str;
-use nom::digit;
+#[allow(unused_imports)]
+use nom::{digit, is_space};
 
+#[allow(dead_code)]
 pub enum LispVal {
     Atom(String),
     List(Box<Vec<LispVal>>),
@@ -101,9 +103,16 @@ named!(number<LispVal>,
     )
 );
 
+
+
 named!(
     pub expression<LispVal>,
     alt!(
         number | atom | string
     )
+);
+
+
+named!(list<Vec<LispVal> >,
+    separated_list!(char!(' '), expression)
 );
