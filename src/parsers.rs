@@ -2,9 +2,10 @@ extern crate std;
 
 use std::str;
 #[allow(unused_imports)]
-use nom::{digit, is_space};
+use nom::{digit, is_space, eof};
 
 #[allow(dead_code)]
+#[derive(Debug)]
 pub enum LispVal {
     Atom(String),
     List(Box<Vec<LispVal>>),
@@ -33,10 +34,18 @@ named!(
     _string<String>,
     map!(
         map_res!(
-            delimited!(
-                char!('\"'),
-                is_not!("\""),
-                char!('\"')
+            map!(
+                delimited!(
+                    char!('\"'),
+                    opt!(is_not!("\"")),
+                    char!('\"')
+                ),
+                |string| {
+                    match string {
+                        Some(s) => s,
+                        None => &[] as &[u8],
+                    }
+                }
             ),
             str::from_utf8
         ),
@@ -104,18 +113,42 @@ named!(number<LispVal>,
 );
 
 named!(
-    pub expression<LispVal>,
+    expression<LispVal>,
     alt!(
-        list | atom | string | number
+        atom | string | number | list
     )
 );
 
 named!(list<LispVal>,
     map!(
         map!(
-            separated_list!(char!(' '), expression),
+            delimited!(
+                char!('('),
+                separated_list!(char!(' '), expression),
+                char!(')')
+            ),
             Box::new
         ),
         LispVal::List
+    )
+);
+
+
+// named!(dotted_list<LispVal>,
+//     chain!(
+//         head: separated_list!(char!(' '), expression) ~
+//         is_space ~
+//         char!('.') ~
+//         is_space ~
+//         tail: expression,
+//         || {
+//             LispVal::DottedList(Box::new(head), Box::new(tail))
+//         }
+//     )
+// );
+
+named!(pub command<LispVal>,
+    terminated!(
+        expression, eof
     )
 );

@@ -21,13 +21,14 @@ fn main() {
                     println!("");
                     continue;
                 }
-                match parsers::expression(line.as_bytes()) {
+                match parsers::command(line.trim().as_bytes()) {
                     Done(_, matched) => {
                         match matched {
                             parsers::LispVal::Bool(val) => println!("Bool {:?}", val),
                             parsers::LispVal::Atom(val) => println!("Atom: {:?}", val),
                             parsers::LispVal::Number(val) => println!("Number: {:?}", val),
                             parsers::LispVal::String(val) => println!("String {:?}", val),
+                            parsers::LispVal::List(val) => println!("List {:?}", val),
                             _ => println!("WAT ?")
                         }
                     },
