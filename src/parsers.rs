@@ -103,16 +103,19 @@ named!(number<LispVal>,
     )
 );
 
-
-
 named!(
     pub expression<LispVal>,
     alt!(
-        number | atom | string
+        list | atom | string | number
     )
 );
 
-
-named!(list<Vec<LispVal> >,
-    separated_list!(char!(' '), expression)
+named!(list<LispVal>,
+    map!(
+        map!(
+            separated_list!(char!(' '), expression),
+            Box::new
+        ),
+        LispVal::List
+    )
 );
