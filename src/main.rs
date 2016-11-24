@@ -37,6 +37,7 @@ fn main() {
                     println!("");
                     continue;
                 }
+                reader.add_history_entry(&line);
                 match parsers::command(line.trim().as_bytes()) {
                     Done(_, expression) => {
                         let result = eval(expression);
