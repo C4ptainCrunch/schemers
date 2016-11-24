@@ -30,7 +30,7 @@ fn main() {
 
     let mut i = 1;
     loop {
-        let readline = reader.readline(&format!("In [{}]: ", i));
+        let readline = reader.readline(&format!("\x1b[32mIn [\x1b[1m{}\x1b[0;32m]: \x1b[0m", i));
         match readline {
             Ok(line) => {
                 if line == "" {
@@ -41,9 +41,9 @@ fn main() {
                 match parsers::command(line.trim().as_bytes()) {
                     Done(_, expression) => {
                         let result = eval(expression);
-                        println!("{}", format_value(result));
+                        println!("\x1b[31mOut[\x1b[1m{}\x1b[0;31m]: \x1b[0m{}\n", i, format_value(result));
                     },
-                    Error(_) | Incomplete(_) => println!("SyntaxError"),
+                    Error(_) | Incomplete(_) => println!("\x1b[31mSyntaxError\x1b[0m\n"),
                 }
             }
             Err(ReadlineError::Interrupted) | Err(ReadlineError::Eof) => {
@@ -51,7 +51,7 @@ fn main() {
                 break;
             },
             Err(err) => {
-                println!("Error: {:?}", err);
+                println!("\x1b[31mError:\x1b[0m {:?}", err);
                 break;
             }
         }
